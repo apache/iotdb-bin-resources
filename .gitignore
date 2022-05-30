@@ -1,0 +1,14 @@
+# Eclipse IDE files
+**/.classpath
+**/.project
+**/.settings/
+# src/main/resources/
+# intellij IDE files
+**/*.iml
+**/.idea/
+**/*.log
+**/*.ipr
+**/*.iws
+# Apple OS X related
+**/.DS_Store
+derby-tsfile-db
