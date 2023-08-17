@@ -369,7 +369,6 @@
             </activation>
             <properties>
                 <os.classifier>mac-aarch64</os.classifier>
-                <cmake.generator>Visual Studio 17 2022</cmake.generator>
             </properties>
             <build>
                 <plugins>
@@ -424,6 +423,7 @@
             </activation>
             <properties>
                 <os.classifier>windows-aarch64</os.classifier>
+                <cmake.generator>Visual Studio 17 2022</cmake.generator>
             </properties>
         </profile>
     </profiles>
