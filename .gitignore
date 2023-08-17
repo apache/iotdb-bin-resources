@@ -13,3 +13,4 @@
 **/.DS_Store
 derby-tsfile-db
 /iotdb-tools-thrift/target/
+/iotdb-tools-thrift/.mvn/wrapper/maven-wrapper.jar
