@@ -190,23 +190,44 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.13</version>
                 <executions>
                     <execution>
                         <id>default-deploy</id>
                         <phase>deploy</phase>
                         <goals>
                             <goal>deploy</goal>
+                            <goal>rc-open</goal>
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <serverId>apache.releases.https</serverId>
-                    <nexusUrl>https://repository.apache.org</nexusUrl>
-                    <skipStagingRepositoryClose>true</skipStagingRepositoryClose>
-                </configuration>
             </plugin>
         </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.13</version>
+                    <executions>
+                        <execution>
+                            <id>default-deploy</id>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>deploy</goal>
+                                <goal>rc-open</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <serverId>apache.releases.https</serverId>
+                        <nexusUrl>https://repository.apache.org</nexusUrl>
+                        <skipStagingRepositoryClose>true</skipStagingRepositoryClose>
+                        <stagingRepositoryId>orgapacheiotdb-1128</stagingRepositoryId>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
     <profiles>

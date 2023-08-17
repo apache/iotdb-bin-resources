@@ -23,5 +23,15 @@
 
     ./mvnw clean deploy -P apache-release
 
-On the first run, this will create an implicit staging repository on https://repository.apache.org/#stagingRepositories and will leave the repository open.
+On the first run, comment out the "stagingRepositoryId" property. 
+This will make the build deploy the rc in a new staging repository in nexus.
 
+As soon as the build is finished, go to https://repository.apache.org/#stagingRepositories and take the new repository id from there and comment in the property again and update the value to that of the staging repository and commit that.
+
+This will make it easy for the other platform deployment. 
+
+Then checkout the repo on the other platforms and run the following on each of the other platforms:
+
+    ./mvnw clean deploy -P apache-release
+
+Once this has been run on each of the supported platforms, go back to Nexus and close the staging repository.
