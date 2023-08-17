@@ -34,4 +34,7 @@ Then checkout the repo on the other platforms and run the following on each of t
 
     ./mvnw clean deploy -P apache-release
 
+> Note: For some reason you will see errors a the end when deploying the other artifacts, however in all cases I did see the artifacts deployed correctly.
+
 Once this has been run on each of the supported platforms, go back to Nexus and close the staging repository.
+

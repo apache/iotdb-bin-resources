@@ -51,6 +51,8 @@
         <thrift.with.go>ON</thrift.with.go>
         <thrift.with.python>ON</thrift.with.python>
         <thrift.with.rust>ON</thrift.with.rust>
+        <cmake.generator>Unix Makefiles</cmake.generator>
+        <cmake.build.type>Release</cmake.build.type>
     </properties>
 
     <build>
@@ -223,7 +225,7 @@
                         <serverId>apache.releases.https</serverId>
                         <nexusUrl>https://repository.apache.org</nexusUrl>
                         <skipStagingRepositoryClose>true</skipStagingRepositoryClose>
-                        <stagingRepositoryId>orgapacheiotdb-1128</stagingRepositoryId>
+                        <!--tagingRepositoryId>orgapacheiotdb-1128</stagingRepositoryId-->
                     </configuration>
                 </plugin>
             </plugins>
@@ -367,6 +369,7 @@
             </activation>
             <properties>
                 <os.classifier>mac-aarch64</os.classifier>
+                <cmake.generator>Visual Studio 17 2022</cmake.generator>
             </properties>
             <build>
                 <plugins>
@@ -407,6 +410,7 @@
             </activation>
             <properties>
                 <os.classifier>windows-x86_64</os.classifier>
+                <cmake.generator>Visual Studio 17 2022</cmake.generator>
             </properties>
         </profile>
 
