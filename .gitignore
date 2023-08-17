@@ -12,3 +12,4 @@
 # Apple OS X related
 **/.DS_Store
 derby-tsfile-db
+/iotdb-tools-thrift/target/
