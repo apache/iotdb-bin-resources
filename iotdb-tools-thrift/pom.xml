@@ -33,20 +33,14 @@
         contains nothing else as the compiled thrift binary without any modification.
         The fourth segment allows us to re-deploy, if we need to change the config.
     -->
-    <version>0.14.1.0</version>
+    <version>0.19.0.0</version>
     <packaging>pom</packaging>
 
     <name>IoTDB-Tools: Thrift</name>
     <description>Local build of the Apache Thrift compiler.</description>
 
     <properties>
-        <!--
-            Thrift 0.17.0 was the last version that could be used in Java 8 applications,
-            However Thrift 0.17.0 has an invalid entry in the META-INF/MANIFEST.mf file.
-            All versions between 0.17.0 and 0.14.1 have know vulnerabilities, so for now
-            we'll stay at 0.14.1.
-        -->
-        <thrift.version>0.14.1</thrift.version>
+        <thrift.version>0.19.0</thrift.version>
         <thrift.with.cpp>ON</thrift.with.cpp>
         <thrift.with.go>ON</thrift.with.go>
         <thrift.with.python>ON</thrift.with.python>
