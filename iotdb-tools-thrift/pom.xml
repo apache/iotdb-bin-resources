@@ -49,6 +49,13 @@
         <cmake.build.type>Release</cmake.build.type>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>conatype-oss</id>
+            <url>https://oss.sonatype.org/service/local/repositories/releases/content</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
@@ -201,6 +208,11 @@
 
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>com.googlecode.cmake-maven-project</groupId>
+                    <artifactId>cmake-maven-plugin</artifactId>
+                    <version>3.27.7-b1</version>
+                </plugin>
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>

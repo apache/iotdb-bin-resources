@@ -38,3 +38,13 @@ Then checkout the repo on the other platforms and run the following on each of t
 
 Once this has been run on each of the supported platforms, go back to Nexus and close the staging repository.
 
+## Prerequisites
+
+The following software needs to be installed in order to build the thrift module:
+
+- Java
+- Flex
+- Bison
+- Boost
+
+Please look in the IoTDB documentation for information on how to install them on your particular OS.
