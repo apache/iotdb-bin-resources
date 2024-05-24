@@ -415,7 +415,8 @@
             </activation>
             <properties>
                 <os.classifier>windows-x86_64</os.classifier>
-                <cmake.generator>MinGW Makefiles</cmake.generator>
+                <!-- We're using Mingw everywhere else, but it seems boost is not supported for that -->
+                <cmake.generator>Visual Studio 17 2022</cmake.generator>
             </properties>
         </profile>
 
@@ -429,7 +430,8 @@
             </activation>
             <properties>
                 <os.classifier>windows-aarch64</os.classifier>
-                <cmake.generator>MinGW Makefiles</cmake.generator>
+                <!-- We're using Mingw everywhere else, but it seems boost is not supported for that -->
+                <cmake.generator>Visual Studio 17 2022</cmake.generator>
             </properties>
         </profile>
     </profiles>
