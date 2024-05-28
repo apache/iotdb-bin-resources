@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>30</version>
+        <version>32</version>
     </parent>
 
     <groupId>org.apache.iotdb.tools</groupId>
@@ -33,14 +33,14 @@
         contains nothing else as the compiled thrift binary without any modification.
         The fourth segment allows us to re-deploy, if we need to change the config.
     -->
-    <version>0.19.0.0</version>
+    <version>0.20.0.0</version>
     <packaging>pom</packaging>
 
     <name>IoTDB-Tools: Thrift</name>
     <description>Local build of the Apache Thrift compiler.</description>
 
     <properties>
-        <thrift.version>0.19.0</thrift.version>
+        <thrift.version>0.20.0</thrift.version>
         <thrift.with.cpp>ON</thrift.with.cpp>
         <thrift.with.go>ON</thrift.with.go>
         <thrift.with.python>ON</thrift.with.python>
@@ -211,7 +211,7 @@
                 <plugin>
                     <groupId>com.googlecode.cmake-maven-project</groupId>
                     <artifactId>cmake-maven-plugin</artifactId>
-                    <version>3.27.7-b1</version>
+                    <version>3.29.3-b2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
@@ -231,7 +231,7 @@
                         <serverId>apache.releases.https</serverId>
                         <nexusUrl>https://repository.apache.org</nexusUrl>
                         <skipStagingRepositoryClose>true</skipStagingRepositoryClose>
-                        <stagingRepositoryId>orgapacheiotdb-1132</stagingRepositoryId>
+                        <stagingRepositoryId>orgapacheiotdb-1158</stagingRepositoryId>
                     </configuration>
                 </plugin>
             </plugins>
@@ -415,6 +415,7 @@
             </activation>
             <properties>
                 <os.classifier>windows-x86_64</os.classifier>
+                <!-- We're using Mingw everywhere else, but it seems boost is not supported for that -->
                 <cmake.generator>Visual Studio 17 2022</cmake.generator>
             </properties>
         </profile>
@@ -429,6 +430,7 @@
             </activation>
             <properties>
                 <os.classifier>windows-aarch64</os.classifier>
+                <!-- We're using Mingw everywhere else, but it seems boost is not supported for that -->
                 <cmake.generator>Visual Studio 17 2022</cmake.generator>
             </properties>
         </profile>
