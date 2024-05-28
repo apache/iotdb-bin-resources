@@ -231,7 +231,7 @@
                         <serverId>apache.releases.https</serverId>
                         <nexusUrl>https://repository.apache.org</nexusUrl>
                         <skipStagingRepositoryClose>true</skipStagingRepositoryClose>
-                        <stagingRepositoryId>orgapacheiotdb-1132</stagingRepositoryId>
+                        <stagingRepositoryId>orgapacheiotdb-1158</stagingRepositoryId>
                     </configuration>
                 </plugin>
             </plugins>
