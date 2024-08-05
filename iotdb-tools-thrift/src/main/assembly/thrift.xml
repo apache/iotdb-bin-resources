@@ -41,6 +41,7 @@
             <includes>
                 <include>lib/*.a</include>
                 <include>lib/Release/*.lib</include>
+                <include>lib/Debug/*.lib</include>
             </includes>
             <outputDirectory>/</outputDirectory>
         </fileSet>
