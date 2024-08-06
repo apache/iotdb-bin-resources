@@ -46,5 +46,6 @@ The following software needs to be installed in order to build the thrift module
 - Flex
 - Bison
 - Boost
+- Ssl
 
 Please look in the IoTDB documentation for information on how to install them on your particular OS.
