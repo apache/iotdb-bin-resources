@@ -58,14 +58,14 @@ The workflow verifies that each generated compiler reports the expected Apache
 Thrift version, and that Linux compilers are statically linked.
 
 The workflow uploads one bundled artifact named
-`iotdb-tools-thrift-all-platforms`. Download and extract that artifact into this
-directory:
+`iotdb-tools-thrift-all-platforms`. Download and extract that artifact under
+`target/` in this directory:
 
-    iotdb-tools-thrift/prebuilt-artifacts/
+    iotdb-tools-thrift/target/prebuilt-artifacts/
 
 If you use the GitHub CLI, run:
 
-    gh run download <run-id> --name iotdb-tools-thrift-all-platforms --dir prebuilt-artifacts
+    gh run download <run-id> --name iotdb-tools-thrift-all-platforms --dir target/prebuilt-artifacts
 
 The directory must contain these files:
 
@@ -84,15 +84,19 @@ executable should report the expected Apache Thrift version.
 
 ## Deploy Prebuilt Artifacts to Nexus
 
-Run the deploy locally from this directory. This signs and deploys the six
-prebuilt platform artifacts from `prebuilt-artifacts/`:
+Run the deploy locally from this directory after downloading the artifacts. This
+signs and deploys the six prebuilt platform artifacts from
+`target/prebuilt-artifacts/`:
 
-    ./mvnw clean deploy -P apache-release,prebuilt-artifacts
+    ./mvnw deploy -P apache-release,prebuilt-artifacts
+
+If you need a clean build, run `./mvnw clean` before downloading the prebuilt
+artifacts because `clean` removes `target/`.
 
 Use `prebuilt.artifacts.dir` if the downloaded artifacts are in another
 directory:
 
-    ./mvnw clean deploy -P apache-release,prebuilt-artifacts -Dprebuilt.artifacts.dir=/path/to/prebuilt-artifacts
+    ./mvnw deploy -P apache-release,prebuilt-artifacts -Dprebuilt.artifacts.dir=/path/to/prebuilt-artifacts
 
 This creates a new staging repository in Nexus. After the deploy completes, open
 https://repository.apache.org/#stagingRepositories and verify the uploaded
@@ -101,7 +105,7 @@ artifacts.
 If you need to re-run the local deploy into an existing staging repository, pass
 that exact staging repository id:
 
-    ./mvnw clean deploy -P apache-release,prebuilt-artifacts -DstagingRepositoryId=orgapacheiotdb-1234
+    ./mvnw deploy -P apache-release,prebuilt-artifacts -DstagingRepositoryId=orgapacheiotdb-1234
 
 The `stagingRepositoryId` value must be an existing Nexus staging repository id.
 Do not use a made-up id.

@@ -43,7 +43,7 @@
         <thrift.version>0.23.0</thrift.version>
         <cmake.generator>Unix Makefiles</cmake.generator>
         <cmake.build.type>Release</cmake.build.type>
-        <prebuilt.artifacts.dir>${project.basedir}/prebuilt-artifacts</prebuilt.artifacts.dir>
+        <prebuilt.artifacts.dir>${project.build.directory}/prebuilt-artifacts</prebuilt.artifacts.dir>
     </properties>
 
     <repositories>
