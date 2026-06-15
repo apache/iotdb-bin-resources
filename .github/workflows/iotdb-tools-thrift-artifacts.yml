@@ -1,0 +1,187 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+
+name: Build IoTDB Tools Thrift Artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      git_ref:
+        description: Optional branch, tag, or commit SHA to build
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: iotdb-tools-thrift-artifacts-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build ${{ matrix.classifier }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - classifier: linux-x86_64
+            runner: ubuntu-24.04
+            platform: linux
+            maven: ./mvnw
+          - classifier: linux-aarch64
+            runner: ubuntu-24.04-arm
+            platform: linux
+            maven: ./mvnw
+          - classifier: mac-x86_64
+            runner: macos-15-intel
+            platform: macos
+            maven: ./mvnw
+          - classifier: mac-aarch64
+            runner: macos-15
+            platform: macos
+            maven: ./mvnw
+          - classifier: windows-x86_64
+            runner: windows-2022
+            platform: windows
+            maven: .\mvnw.cmd
+          - classifier: windows-aarch64
+            runner: windows-11-arm
+            platform: windows
+            maven: .\mvnw.cmd
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.git_ref || github.ref }}
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+
+      - name: Install Linux build prerequisites
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flex bison g++ make
+
+      - name: Install macOS build prerequisites
+        if: matrix.platform == 'macos'
+        run: brew install bison
+
+      - name: Install Windows build prerequisites
+        if: matrix.platform == 'windows'
+        shell: pwsh
+        run: choco install winflexbison3 -y --no-progress
+
+      - name: Verify active Maven classifier
+        working-directory: iotdb-tools-thrift
+        shell: pwsh
+        run: |
+          $expected = "${{ matrix.classifier }}"
+          $actual = & "${{ matrix.maven }}" -q help:evaluate "-Dexpression=os.classifier" "-DforceStdout"
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+          $actual = ($actual | Select-Object -Last 1).Trim()
+          Write-Host "Expected classifier: $expected"
+          Write-Host "Maven classifier: $actual"
+          if ($actual -ne $expected) {
+            throw "Maven activated classifier '$actual', expected '$expected'"
+          }
+
+      - name: Build artifact
+        working-directory: iotdb-tools-thrift
+        shell: pwsh
+        run: |
+          & "${{ matrix.maven }}" clean package -DskipTests
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+      - name: Verify archive contents
+        working-directory: iotdb-tools-thrift
+        shell: pwsh
+        run: |
+          $classifier = "${{ matrix.classifier }}"
+          $zip = Get-ChildItem -Path target -Filter "*-$classifier.zip" | Select-Object -First 1
+          if (-not $zip) {
+            throw "No zip file found for classifier $classifier"
+          }
+
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $archive = [System.IO.Compression.ZipFile]::OpenRead($zip.FullName)
+          try {
+            $files = $archive.Entries | Where-Object { $_.Name } | ForEach-Object { $_.FullName }
+          } finally {
+            $archive.Dispose()
+          }
+
+          $expectedBinary = if ($classifier.StartsWith("windows")) { "bin/thrift.exe" } else { "bin/thrift" }
+          Write-Host "Archive: $($zip.Name)"
+          $files | ForEach-Object { Write-Host " - $_" }
+
+          if ($files.Count -ne 1) {
+            throw "Expected exactly one file in the archive, found $($files.Count)"
+          }
+          if ($files -notcontains $expectedBinary) {
+            throw "Expected archive to contain $expectedBinary"
+          }
+
+      - name: Upload platform artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iotdb-tools-thrift-${{ matrix.classifier }}
+          path: iotdb-tools-thrift/target/*-${{ matrix.classifier }}.zip
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+
+  bundle:
+    name: Bundle all platform artifacts
+    runs-on: ubuntu-24.04
+    needs: build
+    steps:
+      - name: Download platform artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: iotdb-tools-thrift-*
+          merge-multiple: true
+
+      - name: Verify bundled artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          ls -lah dist
+          test "$(find dist -maxdepth 1 -name '*.zip' | wc -l)" -eq 6
+
+      - name: Upload bundled artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iotdb-tools-thrift-all-platforms
+          path: dist/*.zip
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14

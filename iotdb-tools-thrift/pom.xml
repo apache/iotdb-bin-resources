@@ -43,6 +43,7 @@
         <thrift.version>0.23.0</thrift.version>
         <cmake.generator>Unix Makefiles</cmake.generator>
         <cmake.build.type>Release</cmake.build.type>
+        <prebuilt.artifacts.dir>${project.basedir}/prebuilt-artifacts</prebuilt.artifacts.dir>
     </properties>
 
     <repositories>
@@ -153,6 +154,7 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>binary-assembly</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
@@ -203,6 +205,11 @@
                     <groupId>com.googlecode.cmake-maven-project</groupId>
                     <artifactId>cmake-maven-plugin</artifactId>
                     <version>3.29.3-b2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.6.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
@@ -445,6 +452,95 @@
                 <!-- We're using Mingw everywhere else, but it seems boost is not supported for that -->
                 <cmake.generator>Visual Studio 17 2022</cmake.generator>
             </properties>
+        </profile>
+
+        <profile>
+            <id>prebuilt-artifacts</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.googlecode.maven-download-plugin</groupId>
+                        <artifactId>download-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>get-thrift</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.googlecode.cmake-maven-project</groupId>
+                        <artifactId>cmake-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>cmake-generate</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>cmake-compile</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>binary-assembly</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-prebuilt-artifacts</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>attach-artifact</goal>
+                                </goals>
+                                <configuration>
+                                    <artifacts>
+                                        <artifact>
+                                            <file>${prebuilt.artifacts.dir}/${project.artifactId}-${project.version}-linux-x86_64.zip</file>
+                                            <type>zip</type>
+                                            <classifier>linux-x86_64</classifier>
+                                        </artifact>
+                                        <artifact>
+                                            <file>${prebuilt.artifacts.dir}/${project.artifactId}-${project.version}-linux-aarch64.zip</file>
+                                            <type>zip</type>
+                                            <classifier>linux-aarch64</classifier>
+                                        </artifact>
+                                        <artifact>
+                                            <file>${prebuilt.artifacts.dir}/${project.artifactId}-${project.version}-mac-x86_64.zip</file>
+                                            <type>zip</type>
+                                            <classifier>mac-x86_64</classifier>
+                                        </artifact>
+                                        <artifact>
+                                            <file>${prebuilt.artifacts.dir}/${project.artifactId}-${project.version}-mac-aarch64.zip</file>
+                                            <type>zip</type>
+                                            <classifier>mac-aarch64</classifier>
+                                        </artifact>
+                                        <artifact>
+                                            <file>${prebuilt.artifacts.dir}/${project.artifactId}-${project.version}-windows-x86_64.zip</file>
+                                            <type>zip</type>
+                                            <classifier>windows-x86_64</classifier>
+                                        </artifact>
+                                        <artifact>
+                                            <file>${prebuilt.artifacts.dir}/${project.artifactId}-${project.version}-windows-aarch64.zip</file>
+                                            <type>zip</type>
+                                            <classifier>windows-aarch64</classifier>
+                                        </artifact>
+                                    </artifacts>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>

@@ -49,7 +49,65 @@ Run the following command from this directory:
 The archive is generated under `target/`. Check that it contains `bin/thrift`
 and that the binary reports the expected Apache Thrift version.
 
-## Deploy to Nexus
+## Build Release Artifacts With GitHub Actions
+
+The `Build IoTDB Tools Thrift Artifacts` workflow builds the six platform zip
+artifacts without signing or deploying them. Trigger it manually from GitHub
+Actions, optionally passing a branch, tag, or commit SHA in the `git_ref` input.
+
+The workflow uploads one bundled artifact named
+`iotdb-tools-thrift-all-platforms`. Download and extract that artifact into this
+directory:
+
+    iotdb-tools-thrift/prebuilt-artifacts/
+
+If you use the GitHub CLI, run:
+
+    gh run download <run-id> --name iotdb-tools-thrift-all-platforms --dir prebuilt-artifacts
+
+The directory must contain these files:
+
+- `iotdb-tools-thrift-${project.version}-linux-x86_64.zip`
+- `iotdb-tools-thrift-${project.version}-linux-aarch64.zip`
+- `iotdb-tools-thrift-${project.version}-mac-x86_64.zip`
+- `iotdb-tools-thrift-${project.version}-mac-aarch64.zip`
+- `iotdb-tools-thrift-${project.version}-windows-x86_64.zip`
+- `iotdb-tools-thrift-${project.version}-windows-aarch64.zip`
+
+`${project.version}` is the Maven project version, for example `0.23.0.0`.
+
+Verify the archives before deploying them. Each archive should contain only the
+`bin/thrift` executable, or `bin/thrift.exe` on Windows, and the executable
+should report the expected Apache Thrift version.
+
+## Deploy Prebuilt Artifacts to Nexus
+
+Run the deploy locally from this directory. This signs and deploys the six
+prebuilt platform artifacts from `prebuilt-artifacts/`:
+
+    ./mvnw clean deploy -P apache-release,prebuilt-artifacts
+
+Use `prebuilt.artifacts.dir` if the downloaded artifacts are in another
+directory:
+
+    ./mvnw clean deploy -P apache-release,prebuilt-artifacts -Dprebuilt.artifacts.dir=/path/to/prebuilt-artifacts
+
+This creates a new staging repository in Nexus. After the deploy completes, open
+https://repository.apache.org/#stagingRepositories and verify the uploaded
+artifacts.
+
+If you need to re-run the local deploy into an existing staging repository, pass
+that exact staging repository id:
+
+    ./mvnw clean deploy -P apache-release,prebuilt-artifacts -DstagingRepositoryId=orgapacheiotdb-1234
+
+The `stagingRepositoryId` value must be an existing Nexus staging repository id.
+Do not use a made-up id.
+
+## Deploy by Building on Each Platform
+
+If you do not use the prebuilt artifacts workflow, you can still deploy by
+building on each platform.
 
 Run the first deploy on one platform without `stagingRepositoryId`:
 
@@ -63,10 +121,7 @@ Run the deploy on each remaining platform with that exact staging repository id:
 
     ./mvnw clean deploy -P apache-release -DstagingRepositoryId=orgapacheiotdb-1234
 
-The `stagingRepositoryId` value must be an existing Nexus staging repository id
-created by the first deploy. Do not use a made-up id.
-
-Supported classifiers are selected by the active OS profile:
+Supported classifiers are:
 
 - `linux-x86_64`
 - `linux-aarch64`
