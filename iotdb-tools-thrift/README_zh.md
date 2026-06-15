@@ -54,6 +54,8 @@ Windows 上请使用 `mvnw.cmd` 替代 `./mvnw`。
 `Build IoTDB Tools Thrift Artifacts` workflow 会构建六个平台的 zip artifacts，
 但不会签名，也不会 deploy 到 Nexus。请在 GitHub Actions 页面手动触发该
 workflow，可以通过 `git_ref` 输入指定要构建的分支、tag 或 commit SHA。
+Linux artifacts 会固定使用 Ubuntu 22.04 runner 构建，以便生成的可执行文件
+兼容更老的 glibc 版本。
 
 workflow 会上传一个名为 `iotdb-tools-thrift-all-platforms` 的汇总 artifact。
 下载并解压到当前模块的以下目录：
