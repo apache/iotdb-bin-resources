@@ -26,6 +26,10 @@ on:
         description: Optional branch, tag, or commit SHA to build
         required: false
         type: string
+  pull_request:
+    paths:
+      - .github/workflows/iotdb-tools-thrift-artifacts.yml
+      - iotdb-tools-thrift/**
 
 permissions:
   contents: read
@@ -71,7 +75,7 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.git_ref || github.ref }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.git_ref || github.ref }}
 
       - name: Set up Java
         uses: actions/setup-java@v4
