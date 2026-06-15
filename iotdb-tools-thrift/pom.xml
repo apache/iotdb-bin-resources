@@ -33,20 +33,17 @@
         contains nothing else as the compiled thrift binary without any modification.
         The fourth segment allows us to re-deploy, if we need to change the config.
     -->
-    <version>0.20.0.0</version>
+    <version>0.23.0.0</version>
     <packaging>pom</packaging>
 
     <name>IoTDB-Tools: Thrift</name>
     <description>Local build of the Apache Thrift compiler.</description>
 
     <properties>
-        <thrift.version>0.20.0</thrift.version>
-        <thrift.with.cpp>ON</thrift.with.cpp>
-        <thrift.with.go>ON</thrift.with.go>
-        <thrift.with.python>ON</thrift.with.python>
-        <thrift.with.rust>ON</thrift.with.rust>
+        <thrift.version>0.23.0</thrift.version>
         <cmake.generator>Unix Makefiles</cmake.generator>
         <cmake.build.type>Release</cmake.build.type>
+        <prebuilt.artifacts.dir>${project.basedir}/prebuilt-artifacts</prebuilt.artifacts.dir>
     </properties>
 
     <repositories>
@@ -96,48 +93,39 @@
                             <options>
                                 <!-- Disable testing for now -->
                                 <option>-DBUILD_TESTING=OFF</option>
+                                <!-- The release artifact only packages the compiler binary -->
+                                <option>-DBUILD_LIBRARIES=OFF</option>
+                                <option>-DBUILD_TUTORIALS=OFF</option>
                                 <!-- Enable and disable the building of code generators for different languages -->
-                                <option>-DTHRIFT_COMPILER_AS3=OFF</option>
                                 <option>-DTHRIFT_COMPILER_C_GLIB=OFF</option>
                                 <option>-DTHRIFT_COMPILER_CL=OFF</option>
-                                <option>-DTHRIFT_COMPILER_CPP=${thrift.with.cpp}</option>
+                                <option>-DTHRIFT_COMPILER_CPP=OFF</option>
                                 <option>-DTHRIFT_COMPILER_D=OFF</option>
                                 <option>-DTHRIFT_COMPILER_DART=OFF</option>
                                 <option>-DTHRIFT_COMPILER_DELPHI=OFF</option>
                                 <option>-DTHRIFT_COMPILER_ERL=OFF</option>
-                                <option>-DTHRIFT_COMPILER_GO=${thrift.with.go}</option>
+                                <option>-DTHRIFT_COMPILER_GO=ON</option>
                                 <option>-DTHRIFT_COMPILER_GV=OFF</option>
                                 <option>-DTHRIFT_COMPILER_HAXE=OFF</option>
-                                <option>-DTHRIFT_COMPILER_HS=OFF</option>
                                 <option>-DTHRIFT_COMPILER_HTML=OFF</option>
                                 <option>-DTHRIFT_COMPILER_JAVA=ON</option>
-                                <option>-DTHRIFT_COMPILER_JAVAME=ON</option>
+                                <option>-DTHRIFT_COMPILER_JAVAME=OFF</option>
+                                <option>-DTHRIFT_COMPILER_JS=ON</option>
                                 <option>-DTHRIFT_COMPILER_JSON=OFF</option>
+                                <option>-DTHRIFT_COMPILER_KOTLIN=OFF</option>
                                 <option>-DTHRIFT_COMPILER_LUA=OFF</option>
+                                <option>-DTHRIFT_COMPILER_MARKDOWN=OFF</option>
                                 <option>-DTHRIFT_COMPILER_NETSTD=ON</option>
                                 <option>-DTHRIFT_COMPILER_OCAML=OFF</option>
                                 <option>-DTHRIFT_COMPILER_PERL=OFF</option>
                                 <option>-DTHRIFT_COMPILER_PHP=OFF</option>
-                                <option>-DTHRIFT_COMPILER_PY=${thrift.with.python}</option>
+                                <option>-DTHRIFT_COMPILER_PY=ON</option>
                                 <option>-DTHRIFT_COMPILER_RB=OFF</option>
-                                <option>-DTHRIFT_COMPILER_RS=${thrift.with.rust}</option>
+                                <option>-DTHRIFT_COMPILER_RS=ON</option>
                                 <option>-DTHRIFT_COMPILER_ST=OFF</option>
                                 <option>-DTHRIFT_COMPILER_SWIFT=OFF</option>
                                 <option>-DTHRIFT_COMPILER_XML=OFF</option>
                                 <option>-DTHRIFT_COMPILER_XSD=OFF</option>
-                                <!-- Enable and disable the building of libs for different languages -->
-                                <option>-DBUILD_C_GLIB=OFF</option>
-                                <option>-DBUILD_CPP=${thrift.with.cpp}</option>
-                                <!-- Don't build Java, as the libs are available via Maven -->
-                                <option>-DBUILD_JAVA=OFF</option>
-                                <option>-DBUILD_NODEJS=OFF</option>
-                                <option>-DBUILD_PYTHON=${thrift.with.python}</option>
-                                <option>-DBUILD_JAVASCRIPT=OFF</option>
-                                <option>-DBUILD_HASKELL=OFF</option>
-                                <option>-DWITH_SHARED_LIB=OFF</option>
-                                <!-- Generate libthrift.a to compile IoTDB Session -->
-                                <option>-DWITH_STATIC_LIB=ON</option>
-                                <option>-DCMAKE_POSITION_INDEPENDENT_CODE=ON</option>
                             </options>
                         </configuration>
                     </execution>
@@ -159,14 +147,14 @@
 
             <!--
                 Bundle up the needed parts into an archive for this architecture
-                The bundle contains the Thrift executable, the shared libraries and the header-files,
-                which are all needed to build the client
+                The bundle contains the Thrift executable.
             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>binary-assembly</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
@@ -209,9 +197,19 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>com.googlecode.maven-download-plugin</groupId>
+                    <artifactId>download-maven-plugin</artifactId>
+                    <version>1.7.1</version>
+                </plugin>
+                <plugin>
                     <groupId>com.googlecode.cmake-maven-project</groupId>
                     <artifactId>cmake-maven-plugin</artifactId>
                     <version>3.29.3-b2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.6.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
@@ -231,7 +229,6 @@
                         <serverId>apache.releases.https</serverId>
                         <nexusUrl>https://repository.apache.org</nexusUrl>
                         <skipStagingRepositoryClose>true</skipStagingRepositoryClose>
-                        <stagingRepositoryId>orgapacheiotdb-1158</stagingRepositoryId>
                     </configuration>
                 </plugin>
             </plugins>
@@ -239,6 +236,28 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>reuse-staging-repository</id>
+            <activation>
+                <property>
+                    <name>stagingRepositoryId</name>
+                </property>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.sonatype.plugins</groupId>
+                            <artifactId>nexus-staging-maven-plugin</artifactId>
+                            <configuration>
+                                <stagingRepositoryId>${stagingRepositoryId}</stagingRepositoryId>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+
         <profile>
             <id>.os-unix</id>
             <activation>
@@ -433,6 +452,95 @@
                 <!-- We're using Mingw everywhere else, but it seems boost is not supported for that -->
                 <cmake.generator>Visual Studio 17 2022</cmake.generator>
             </properties>
+        </profile>
+
+        <profile>
+            <id>prebuilt-artifacts</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.googlecode.maven-download-plugin</groupId>
+                        <artifactId>download-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>get-thrift</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.googlecode.cmake-maven-project</groupId>
+                        <artifactId>cmake-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>cmake-generate</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>cmake-compile</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>binary-assembly</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-prebuilt-artifacts</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>attach-artifact</goal>
+                                </goals>
+                                <configuration>
+                                    <artifacts>
+                                        <artifact>
+                                            <file>${prebuilt.artifacts.dir}/${project.artifactId}-${project.version}-linux-x86_64.zip</file>
+                                            <type>zip</type>
+                                            <classifier>linux-x86_64</classifier>
+                                        </artifact>
+                                        <artifact>
+                                            <file>${prebuilt.artifacts.dir}/${project.artifactId}-${project.version}-linux-aarch64.zip</file>
+                                            <type>zip</type>
+                                            <classifier>linux-aarch64</classifier>
+                                        </artifact>
+                                        <artifact>
+                                            <file>${prebuilt.artifacts.dir}/${project.artifactId}-${project.version}-mac-x86_64.zip</file>
+                                            <type>zip</type>
+                                            <classifier>mac-x86_64</classifier>
+                                        </artifact>
+                                        <artifact>
+                                            <file>${prebuilt.artifacts.dir}/${project.artifactId}-${project.version}-mac-aarch64.zip</file>
+                                            <type>zip</type>
+                                            <classifier>mac-aarch64</classifier>
+                                        </artifact>
+                                        <artifact>
+                                            <file>${prebuilt.artifacts.dir}/${project.artifactId}-${project.version}-windows-x86_64.zip</file>
+                                            <type>zip</type>
+                                            <classifier>windows-x86_64</classifier>
+                                        </artifact>
+                                        <artifact>
+                                            <file>${prebuilt.artifacts.dir}/${project.artifactId}-${project.version}-windows-aarch64.zip</file>
+                                            <type>zip</type>
+                                            <classifier>windows-aarch64</classifier>
+                                        </artifact>
+                                    </artifacts>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>

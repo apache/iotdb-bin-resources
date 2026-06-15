@@ -35,31 +35,5 @@
             </includes>
             <outputDirectory>bin</outputDirectory>
         </fileSet>
-        <!-- Include the shared-libraries -->
-        <fileSet>
-            <directory>${project.build.directory}/build</directory>
-            <includes>
-                <include>lib/*.a</include>
-                <include>lib/Release/*.lib</include>
-                <include>lib/Debug/*.lib</include>
-            </includes>
-            <outputDirectory>/</outputDirectory>
-        </fileSet>
-        <!-- Include the header-files -->
-        <fileSet>
-            <directory>${project.build.directory}/thrift-${thrift.version}/lib/cpp/src</directory>
-            <includes>
-                <include>**</include>
-            </includes>
-            <outputDirectory>include</outputDirectory>
-        </fileSet>
-        <!-- Include the config.h -->
-        <fileSet>
-            <directory>${project.build.directory}/build/thrift</directory>
-            <includes>
-                <include>config.h</include>
-            </includes>
-            <outputDirectory>include/thrift</outputDirectory>
-        </fileSet>
     </fileSets>
 </assembly>
