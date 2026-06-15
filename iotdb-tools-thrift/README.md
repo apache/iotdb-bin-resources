@@ -21,31 +21,58 @@
 
 # Releasing the IoTDB Tools: Thrift
 
-    ./mvnw clean deploy -P apache-release
-
-On the first run, comment out the "stagingRepositoryId" property. 
-This will make the build deploy the rc in a new staging repository in nexus.
-
-As soon as the build is finished, go to https://repository.apache.org/#stagingRepositories and take the new repository id from there and comment in the property again and update the value to that of the staging repository and commit that.
-
-This will make it easy for the other platform deployment. 
-
-Then checkout the repo on the other platforms and run the following on each of the other platforms:
-
-    ./mvnw clean deploy -P apache-release
-
-> Note: For some reason you will see errors a the end when deploying the other artifacts, however in all cases I did see the artifacts deployed correctly.
-
-Once this has been run on each of the supported platforms, go back to Nexus and close the staging repository.
+This module publishes platform-specific Apache Thrift compiler archives used by
+IoTDB builds. The archives contain the `thrift` executable only.
 
 ## Prerequisites
 
-The following software needs to be installed in order to build the thrift module:
+Install the following software before building this module:
 
-- Java
+- JDK
 - Flex
 - Bison
-- Boost
-- Ssl
+- A C/C++ build toolchain supported by CMake
+- GPG configured for Apache release signing
+- Apache Nexus credentials configured as `apache.releases.https` in Maven `settings.xml`
 
-Please look in the IoTDB documentation for information on how to install them on your particular OS.
+Linux static builds may also need static zlib and OpenSSL development packages.
+
+Use `mvnw.cmd` instead of `./mvnw` on Windows.
+
+## Build Locally
+
+Run the following command from this directory:
+
+    ./mvnw clean package -DskipTests
+
+The archive is generated under `target/`. Check that it contains `bin/thrift`
+and that the binary reports the expected Apache Thrift version.
+
+## Deploy to Nexus
+
+Run the first deploy on one platform without `stagingRepositoryId`:
+
+    ./mvnw clean deploy -P apache-release
+
+This creates a new staging repository in Nexus. After the deploy completes, open
+https://repository.apache.org/#stagingRepositories and copy the generated staging
+repository id, for example `orgapacheiotdb-1234`.
+
+Run the deploy on each remaining platform with that exact staging repository id:
+
+    ./mvnw clean deploy -P apache-release -DstagingRepositoryId=orgapacheiotdb-1234
+
+The `stagingRepositoryId` value must be an existing Nexus staging repository id
+created by the first deploy. Do not use a made-up id.
+
+Supported classifiers are selected by the active OS profile:
+
+- `linux-x86_64`
+- `linux-aarch64`
+- `mac-x86_64`
+- `mac-aarch64`
+- `windows-x86_64`
+- `windows-aarch64`
+
+After all platform archives have been deployed, verify the staging repository in
+Nexus, close it, and continue with the Apache release vote and release process.
