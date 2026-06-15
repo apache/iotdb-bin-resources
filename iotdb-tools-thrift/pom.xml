@@ -33,18 +33,14 @@
         contains nothing else as the compiled thrift binary without any modification.
         The fourth segment allows us to re-deploy, if we need to change the config.
     -->
-    <version>0.20.0.0</version>
+    <version>0.23.0.0</version>
     <packaging>pom</packaging>
 
     <name>IoTDB-Tools: Thrift</name>
     <description>Local build of the Apache Thrift compiler.</description>
 
     <properties>
-        <thrift.version>0.20.0</thrift.version>
-        <thrift.with.cpp>ON</thrift.with.cpp>
-        <thrift.with.go>ON</thrift.with.go>
-        <thrift.with.python>ON</thrift.with.python>
-        <thrift.with.rust>ON</thrift.with.rust>
+        <thrift.version>0.23.0</thrift.version>
         <cmake.generator>Unix Makefiles</cmake.generator>
         <cmake.build.type>Release</cmake.build.type>
     </properties>
@@ -96,48 +92,39 @@
                             <options>
                                 <!-- Disable testing for now -->
                                 <option>-DBUILD_TESTING=OFF</option>
+                                <!-- The release artifact only packages the compiler binary -->
+                                <option>-DBUILD_LIBRARIES=OFF</option>
+                                <option>-DBUILD_TUTORIALS=OFF</option>
                                 <!-- Enable and disable the building of code generators for different languages -->
-                                <option>-DTHRIFT_COMPILER_AS3=OFF</option>
                                 <option>-DTHRIFT_COMPILER_C_GLIB=OFF</option>
                                 <option>-DTHRIFT_COMPILER_CL=OFF</option>
-                                <option>-DTHRIFT_COMPILER_CPP=${thrift.with.cpp}</option>
+                                <option>-DTHRIFT_COMPILER_CPP=OFF</option>
                                 <option>-DTHRIFT_COMPILER_D=OFF</option>
                                 <option>-DTHRIFT_COMPILER_DART=OFF</option>
                                 <option>-DTHRIFT_COMPILER_DELPHI=OFF</option>
                                 <option>-DTHRIFT_COMPILER_ERL=OFF</option>
-                                <option>-DTHRIFT_COMPILER_GO=${thrift.with.go}</option>
+                                <option>-DTHRIFT_COMPILER_GO=ON</option>
                                 <option>-DTHRIFT_COMPILER_GV=OFF</option>
                                 <option>-DTHRIFT_COMPILER_HAXE=OFF</option>
-                                <option>-DTHRIFT_COMPILER_HS=OFF</option>
                                 <option>-DTHRIFT_COMPILER_HTML=OFF</option>
                                 <option>-DTHRIFT_COMPILER_JAVA=ON</option>
-                                <option>-DTHRIFT_COMPILER_JAVAME=ON</option>
+                                <option>-DTHRIFT_COMPILER_JAVAME=OFF</option>
+                                <option>-DTHRIFT_COMPILER_JS=ON</option>
                                 <option>-DTHRIFT_COMPILER_JSON=OFF</option>
+                                <option>-DTHRIFT_COMPILER_KOTLIN=OFF</option>
                                 <option>-DTHRIFT_COMPILER_LUA=OFF</option>
+                                <option>-DTHRIFT_COMPILER_MARKDOWN=OFF</option>
                                 <option>-DTHRIFT_COMPILER_NETSTD=ON</option>
                                 <option>-DTHRIFT_COMPILER_OCAML=OFF</option>
                                 <option>-DTHRIFT_COMPILER_PERL=OFF</option>
                                 <option>-DTHRIFT_COMPILER_PHP=OFF</option>
-                                <option>-DTHRIFT_COMPILER_PY=${thrift.with.python}</option>
+                                <option>-DTHRIFT_COMPILER_PY=ON</option>
                                 <option>-DTHRIFT_COMPILER_RB=OFF</option>
-                                <option>-DTHRIFT_COMPILER_RS=${thrift.with.rust}</option>
+                                <option>-DTHRIFT_COMPILER_RS=ON</option>
                                 <option>-DTHRIFT_COMPILER_ST=OFF</option>
                                 <option>-DTHRIFT_COMPILER_SWIFT=OFF</option>
                                 <option>-DTHRIFT_COMPILER_XML=OFF</option>
                                 <option>-DTHRIFT_COMPILER_XSD=OFF</option>
-                                <!-- Enable and disable the building of libs for different languages -->
-                                <option>-DBUILD_C_GLIB=OFF</option>
-                                <option>-DBUILD_CPP=${thrift.with.cpp}</option>
-                                <!-- Don't build Java, as the libs are available via Maven -->
-                                <option>-DBUILD_JAVA=OFF</option>
-                                <option>-DBUILD_NODEJS=OFF</option>
-                                <option>-DBUILD_PYTHON=${thrift.with.python}</option>
-                                <option>-DBUILD_JAVASCRIPT=OFF</option>
-                                <option>-DBUILD_HASKELL=OFF</option>
-                                <option>-DWITH_SHARED_LIB=OFF</option>
-                                <!-- Generate libthrift.a to compile IoTDB Session -->
-                                <option>-DWITH_STATIC_LIB=ON</option>
-                                <option>-DCMAKE_POSITION_INDEPENDENT_CODE=ON</option>
                             </options>
                         </configuration>
                     </execution>
@@ -159,8 +146,7 @@
 
             <!--
                 Bundle up the needed parts into an archive for this architecture
-                The bundle contains the Thrift executable, the shared libraries and the header-files,
-                which are all needed to build the client
+                The bundle contains the Thrift executable.
             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -208,6 +194,11 @@
 
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>com.googlecode.maven-download-plugin</groupId>
+                    <artifactId>download-maven-plugin</artifactId>
+                    <version>1.7.1</version>
+                </plugin>
                 <plugin>
                     <groupId>com.googlecode.cmake-maven-project</groupId>
                     <artifactId>cmake-maven-plugin</artifactId>
