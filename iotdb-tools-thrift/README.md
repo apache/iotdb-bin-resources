@@ -35,7 +35,8 @@ Install the following software before building this module:
 - GPG configured for Apache release signing
 - Apache Nexus credentials configured as `apache.releases.https` in Maven `settings.xml`
 
-Linux static builds may also need static zlib and OpenSSL development packages.
+Linux profiles build the `thrift` executable with `-static`, so the build host
+needs the static runtime libraries required by its C/C++ toolchain.
 
 Use `mvnw.cmd` instead of `./mvnw` on Windows.
 

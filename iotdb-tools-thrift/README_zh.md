@@ -35,7 +35,8 @@ compiler 压缩包。压缩包中只包含 `thrift` 可执行文件。
 - 已配置好 Apache 发布签名的 GPG
 - 在 Maven `settings.xml` 中配置好 server id 为 `apache.releases.https` 的 Apache Nexus 凭据
 
-Linux 静态构建可能还需要安装 zlib 和 OpenSSL 的静态开发包。
+Linux profile 会用 `-static` 链接 `thrift` 可执行文件，因此构建机器需要具备
+当前 C/C++ 工具链静态链接所需的运行时库。
 
 Windows 上请使用 `mvnw.cmd` 替代 `./mvnw`。
 
