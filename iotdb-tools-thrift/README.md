@@ -54,8 +54,8 @@ and that the binary reports the expected Apache Thrift version.
 The `Build IoTDB Tools Thrift Artifacts` workflow builds the six platform zip
 artifacts without signing or deploying them. Trigger it manually from GitHub
 Actions, optionally passing a branch, tag, or commit SHA in the `git_ref` input.
-Linux artifacts are built on Ubuntu 22.04 runners to keep the generated
-executables compatible with older glibc versions.
+The workflow verifies that each generated compiler reports the expected Apache
+Thrift version, and that Linux compilers are statically linked.
 
 The workflow uploads one bundled artifact named
 `iotdb-tools-thrift-all-platforms`. Download and extract that artifact into this

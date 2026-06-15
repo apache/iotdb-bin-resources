@@ -43,11 +43,11 @@ jobs:
       matrix:
         include:
           - classifier: linux-x86_64
-            runner: ubuntu-22.04
+            runner: ubuntu-24.04
             platform: linux
             maven: ./mvnw
           - classifier: linux-aarch64
-            runner: ubuntu-22.04-arm
+            runner: ubuntu-24.04-arm
             platform: linux
             maven: ./mvnw
           - classifier: mac-x86_64
@@ -149,6 +149,35 @@ jobs:
             throw "Expected archive to contain $expectedBinary"
           }
 
+          $extractDir = Join-Path $env:RUNNER_TEMP "thrift-$classifier"
+          Remove-Item -Recurse -Force $extractDir -ErrorAction SilentlyContinue
+          Expand-Archive -Path $zip.FullName -DestinationPath $extractDir
+          $binary = Join-Path $extractDir $expectedBinary
+          if (-not (Test-Path $binary)) {
+            throw "Expected binary not found after extraction: $expectedBinary"
+          }
+          if (-not $classifier.StartsWith("windows")) {
+            chmod +x $binary
+          }
+
+          $version = & $binary --version
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+          $version = ($version | Select-Object -Last 1).Trim()
+          Write-Host "Thrift version output: $version"
+          if ($version -ne "Thrift version 0.23.0") {
+            throw "Unexpected thrift version output: $version"
+          }
+
+          if ($classifier.StartsWith("linux")) {
+            $fileInfo = & file $binary
+            Write-Host "file output: $fileInfo"
+            if ($fileInfo -notmatch "statically linked") {
+              throw "Expected Linux thrift binary to be statically linked"
+            }
+          }
+
       - name: Upload platform artifact
         uses: actions/upload-artifact@v4
         with:
@@ -160,7 +189,7 @@ jobs:
 
   bundle:
     name: Bundle all platform artifacts
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: build
     steps:
       - name: Download platform artifacts
@@ -176,6 +205,9 @@ jobs:
           set -euo pipefail
           ls -lah dist
           test "$(find dist -maxdepth 1 -name '*.zip' | wc -l)" -eq 6
+          for classifier in linux-x86_64 linux-aarch64 mac-x86_64 mac-aarch64 windows-x86_64 windows-aarch64; do
+            test "$(find dist -maxdepth 1 -name "*-${classifier}.zip" | wc -l)" -eq 1
+          done
 
       - name: Upload bundled artifact
         uses: actions/upload-artifact@v4
