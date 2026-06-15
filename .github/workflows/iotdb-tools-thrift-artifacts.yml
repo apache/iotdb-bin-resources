@@ -81,7 +81,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
           cache: maven
 
       - name: Install Linux build prerequisites
@@ -142,7 +142,7 @@ jobs:
             $archive.Dispose()
           }
 
-          $expectedBinary = if ($classifier.StartsWith("windows")) { "bin/thrift.exe" } else { "bin/thrift" }
+          $expectedBinary = if ($classifier.StartsWith("windows")) { "bin/Release/thrift.exe" } else { "bin/thrift" }
           Write-Host "Archive: $($zip.Name)"
           $files | ForEach-Object { Write-Host " - $_" }
 

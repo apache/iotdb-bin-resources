@@ -78,8 +78,8 @@ workflow 会上传一个名为 `iotdb-tools-thrift-all-platforms` 的汇总 arti
 `${project.version}` 是 Maven 项目版本，例如 `0.23.0.0`。
 
 deploy 前请先检查这些压缩包。每个压缩包应当只包含 `bin/thrift` 可执行文件，
-Windows 平台为 `bin/thrift.exe`，并且该可执行文件输出的 Apache Thrift 版本
-符合预期。
+Windows 平台为 `bin/Release/thrift.exe`，并且该可执行文件输出的 Apache
+Thrift 版本符合预期。
 
 ## 将预构建 artifacts 发布到 Nexus
 

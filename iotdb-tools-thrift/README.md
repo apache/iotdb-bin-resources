@@ -79,8 +79,8 @@ The directory must contain these files:
 `${project.version}` is the Maven project version, for example `0.23.0.0`.
 
 Verify the archives before deploying them. Each archive should contain only the
-`bin/thrift` executable, or `bin/thrift.exe` on Windows, and the executable
-should report the expected Apache Thrift version.
+`bin/thrift` executable, or `bin/Release/thrift.exe` on Windows, and the
+executable should report the expected Apache Thrift version.
 
 ## Deploy Prebuilt Artifacts to Nexus
 
