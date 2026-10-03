@@ -142,7 +142,13 @@ jobs:
             $archive.Dispose()
           }
 
-          $expectedBinary = if ($classifier.StartsWith("windows")) { "bin/Release/thrift.exe" } else { "bin/thrift" }
+          $expectedBinary = if ($classifier -eq "windows-x86_64") {
+            "bin/Release/thrift.exe"
+          } elseif ($classifier -eq "windows-aarch64") {
+            "bin/thrift.exe"
+          } else {
+            "bin/thrift"
+          }
           Write-Host "Archive: $($zip.Name)"
           $files | ForEach-Object { Write-Host " - $_" }
 

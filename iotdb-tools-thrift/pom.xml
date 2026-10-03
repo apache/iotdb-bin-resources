@@ -449,8 +449,8 @@
             </activation>
             <properties>
                 <os.classifier>windows-aarch64</os.classifier>
-                <!-- We're using Mingw everywhere else, but it seems boost is not supported for that -->
-                <cmake.generator>Visual Studio 17 2022</cmake.generator>
+                <!-- The GitHub-hosted Windows ARM runner provides LLVM and Ninja, but not Visual Studio. -->
+                <cmake.generator>Ninja</cmake.generator>
             </properties>
         </profile>
 
