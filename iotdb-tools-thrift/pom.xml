@@ -33,14 +33,14 @@
         contains nothing else as the compiled thrift binary without any modification.
         The fourth segment allows us to re-deploy, if we need to change the config.
     -->
-    <version>0.23.0.0</version>
+    <version>0.25.0.0</version>
     <packaging>pom</packaging>
 
     <name>IoTDB-Tools: Thrift</name>
     <description>Local build of the Apache Thrift compiler.</description>
 
     <properties>
-        <thrift.version>0.23.0</thrift.version>
+        <thrift.version>0.25.0</thrift.version>
         <cmake.generator>Unix Makefiles</cmake.generator>
         <cmake.build.type>Release</cmake.build.type>
         <prebuilt.artifacts.dir>${project.build.directory}/prebuilt-artifacts</prebuilt.artifacts.dir>

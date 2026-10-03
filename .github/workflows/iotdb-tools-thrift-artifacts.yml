@@ -170,7 +170,7 @@ jobs:
           }
           $version = ($version | Select-Object -Last 1).Trim()
           Write-Host "Thrift version output: $version"
-          if ($version -ne "Thrift version 0.23.0") {
+          if ($version -ne "Thrift version 0.25.0") {
             throw "Unexpected thrift version output: $version"
           }
 
