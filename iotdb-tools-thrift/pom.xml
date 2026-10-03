@@ -454,6 +454,18 @@
                 <os.classifier>windows-aarch64</os.classifier>
                 <cmake.generator>Visual Studio 18 2026</cmake.generator>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.github.cmake-maven-plugin</groupId>
+                        <artifactId>cmake-maven-plugin</artifactId>
+                        <configuration>
+                            <!-- CMake does not publish Windows ARM64 binaries; use the runner's CMake. -->
+                            <downloadBinaries>false</downloadBinaries>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 
         <profile>
