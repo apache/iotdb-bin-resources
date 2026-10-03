@@ -142,10 +142,8 @@ jobs:
             $archive.Dispose()
           }
 
-          $expectedBinary = if ($classifier -eq "windows-x86_64") {
+          $expectedBinary = if ($classifier.StartsWith("windows")) {
             "bin/Release/thrift.exe"
-          } elseif ($classifier -eq "windows-aarch64") {
-            "bin/thrift.exe"
           } else {
             "bin/thrift"
           }
