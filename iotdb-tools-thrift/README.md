@@ -76,7 +76,7 @@ The directory must contain these files:
 - `iotdb-tools-thrift-${project.version}-windows-x86_64.zip`
 - `iotdb-tools-thrift-${project.version}-windows-aarch64.zip`
 
-`${project.version}` is the Maven project version, for example `0.23.0.0`.
+`${project.version}` is the Maven project version, for example `0.25.0.0`.
 
 Verify the archives before deploying them. Each archive should contain only the
 `bin/thrift` executable, or `bin/Release/thrift.exe` on Windows, and the

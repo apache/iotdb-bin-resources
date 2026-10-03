@@ -142,7 +142,11 @@ jobs:
             $archive.Dispose()
           }
 
-          $expectedBinary = if ($classifier.StartsWith("windows")) { "bin/Release/thrift.exe" } else { "bin/thrift" }
+          $expectedBinary = if ($classifier.StartsWith("windows")) {
+            "bin/Release/thrift.exe"
+          } else {
+            "bin/thrift"
+          }
           Write-Host "Archive: $($zip.Name)"
           $files | ForEach-Object { Write-Host " - $_" }
 
@@ -170,7 +174,7 @@ jobs:
           }
           $version = ($version | Select-Object -Last 1).Trim()
           Write-Host "Thrift version output: $version"
-          if ($version -ne "Thrift version 0.23.0") {
+          if ($version -ne "Thrift version 0.25.0") {
             throw "Unexpected thrift version output: $version"
           }
 
